@@ -1,8 +1,11 @@
-from flask import Flask
-from config import DEBUG
+from flask import Flask, jsonify
+
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+
+
 
 @app.route('/hello/')
 def hello():
