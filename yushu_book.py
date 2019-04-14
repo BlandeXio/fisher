@@ -1,13 +1,15 @@
-from http import HTTP
+from http_helper import HTTP
 
 class YuShuBook:
 
-    isbn_url = 'http://t.yushu.im/v2/book/isbn/'
+    isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
     keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
     @classmethod
     def search_by_isbn(cls, isbn):
         url = cls.isbn_url.format(isbn)
         result = HTTP.get(url)
+        # print(url)
+        # print(result)
         return result
     @classmethod
     def search_by_keyword(cls, keyword, count=15, start=0):
