@@ -1,4 +1,4 @@
 from flask import Blueprint
 
-web = Blueprint('web', __package__)
+web_bp = Blueprint('web', __package__)
 from app.web import book

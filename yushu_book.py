@@ -1,4 +1,5 @@
 from http_helper import HTTP
+from flask import current_app
 
 class YuShuBook:
 
@@ -8,12 +9,14 @@ class YuShuBook:
     def search_by_isbn(cls, isbn):
         url = cls.isbn_url.format(isbn)
         result = HTTP.get(url)
-        # print(url)
-        # print(result)
         return result
     @classmethod
-    def search_by_keyword(cls, keyword, count=15, start=0):
-        url = cls.keyword_url.format(keyword, count, start)
+    def search_by_keyword(cls, keyword, page=1):
+        url = cls.keyword_url.format(keyword, current_app.config['PER_PAGE'], cls.caculate_start(page))
         result = HTTP.get(url)
         return result
+
+    @staticmethod
+    def caculate_start(page):
+        return (page-1) * current_app.config['PER_PAGE']
 
