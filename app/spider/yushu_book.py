@@ -1,24 +1,52 @@
 from flask import current_app
 
+from app import cache
+from app.libs.http import Http
 from app.libs.http_helper import HTTP
 
 
 class YuShuBook:
-
+    """
+        鱼书API提供数据
+    """
+    per_page = 15
+    # isbn_url = 'https://api.douban.com/v2/book/isbn/{}'
+    # keyword_url = 'https://api.douban.com/v2/book/search?q={}&count={}&start={}'
     isbn_url = 'http://t.yushu.im/v2/book/isbn/{}'
     keyword_url = 'http://t.yushu.im/v2/book/search?q={}&count={}&start={}'
-    @classmethod
-    def search_by_isbn(cls, isbn):
-        url = cls.isbn_url.format(isbn)
-        result = HTTP.get(url)
-        return result
-    @classmethod
-    def search_by_keyword(cls, keyword, page=1):
-        url = cls.keyword_url.format(keyword, current_app.config['PER_PAGE'], cls.caculate_start(page))
-        result = HTTP.get(url)
-        return result
 
-    @staticmethod
-    def caculate_start(page):
-        return (page-1) * current_app.config['PER_PAGE']
+    def __init__(self):
+        self.total = 0
+        self.books = []
+
+    @cache.memoize(timeout=60)
+    def search_by_isbn(self, isbn):
+        """
+            isbn搜索的结果可以被缓存
+        """
+        url = self.isbn_url.format(isbn)
+        result = Http.get(url)
+        self.__fill_single(result)
+
+    def search_by_keyword(self, keyword, page):
+        """
+            keyword不缓存，意义不大
+        """
+        page = int(page)
+        url = self.keyword_url.format(keyword, self.per_page, self.per_page * (page - 1))
+        result = Http.get(url)
+        self.__fill_collection(result)
+
+    @property
+    def first(self):
+        return self.books[0] if self.total >= 1 else None
+
+    def __fill_single(self, data):
+        if data:
+            self.total = 1
+            self.books.append(data)
+
+    def __fill_collection(self, data):
+        self.total = data['total']
+        self.books = data['books']
 

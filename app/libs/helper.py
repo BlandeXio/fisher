@@ -1,5 +1,5 @@
 
-def get_isbn_or_key(word):
+def is_isbn_or_key(word):
     isbn_or_key = 'key'
     if len(word) == 13 and word.isdigit():
         isbn_or_key = 'isbn'

@@ -1,0 +1,11 @@
+# date 2019/4/15
+
+
+__author__ = 'Louis'
+
+PER_PAGE = 15
+RECENT_BOOK_PER_PAGE = 60
+
+BEANS_EVERY_DRIFT = 1
+
+BEANS_UPLOAD_ONE_BOOK = 0.5
